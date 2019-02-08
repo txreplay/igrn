@@ -43,22 +43,22 @@ export class AppCamera extends React.Component {
         }
     };
 
-    async getPictures() {
+    getPictures = async () => {
         const album = await MediaLibrary.getAlbumAsync('igrn');
         const assetsO = await MediaLibrary.getAssetsAsync({album: album});
         const assets = assetsO.assets.reverse();
 
         for (const i in assets) {
-            assets[i].src = await this.addSrc(assets[i]);
+            assets[i].src = await this.getBase64(assets[i]);
         }
 
         await this.setState({assets: assets});
-    }
+    };
 
-    async addSrc(asset) {
+    getBase64 = async (asset) => {
         const data = await FileSystem.readAsStringAsync(asset.uri, {encoding: FileSystem.EncodingTypes.Base64});
         return 'data:image/png;base64,' + data;
-    }
+    };
 
 
     render() {
@@ -70,7 +70,8 @@ export class AppCamera extends React.Component {
             gallery.push(
                 <TouchableOpacity
                     onPress={() => this.props.navigation.navigate('AppCustom', {
-                        picture: this.state.assets[i].src,
+                        albumId: this.state.assets[i].albumId,
+                        id: this.state.assets[i].id,
                     })}
                     style={{width: 120, height: 160}}
                     key={i}
