@@ -1,12 +1,14 @@
 import React from 'react';
 import { createStackNavigator, createAppContainer } from "react-navigation";
 
-import {CameraApp} from './Camera';
+import {AppCamera} from './AppCamera';
+import {AppCustom} from './AppCustom';
 
 const AppNavigator = createAppContainer(createStackNavigator({
-    CameraApp: {screen: CameraApp},
+    AppCamera: {screen: AppCamera},
+    AppCustom: {screen: AppCustom},
 }, {
-    initialRouteName: 'CameraApp'
+    initialRouteName: 'AppCamera'
 }));
 
 export default class App extends React.Component {

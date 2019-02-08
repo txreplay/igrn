@@ -2,7 +2,7 @@ import React from "react";
 import {Camera, FileSystem, MediaLibrary, Permissions} from "expo";
 import {Image, Text, TouchableOpacity, View, ScrollView} from "react-native";
 
-export class CameraApp extends React.Component {
+export class AppCamera extends React.Component {
     static navigationOptions = {
         title: '📸',
     };
@@ -68,7 +68,18 @@ export class CameraApp extends React.Component {
 
         for (const i in this.state.assets) {
             gallery.push(
-                <Image key={i} source={{uri: this.state.assets[i].src}} style={{width: 120, height: 160}} />
+                <TouchableOpacity
+                    onPress={() => this.props.navigation.navigate('AppCustom', {
+                        picture: this.state.assets[i].src,
+                    })}
+                    style={{width: 120, height: 160}}
+                    key={i}
+                >
+                    <Image
+                        source={{uri: this.state.assets[i].src}}
+                        style={{width: 120, height: 160}}
+                    />
+                </TouchableOpacity>
             );
         }
 
