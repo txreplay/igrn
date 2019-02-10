@@ -7,13 +7,10 @@ export class AppCustom extends React.Component {
     };
 
     state = {
-        motion: {},
         image: null
     };
 
     async componentDidMount() {
-        this._toggle();
-
         const { navigation } = this.props;
         const albumId = navigation.getParam('albumId');
         const picId = navigation.getParam('id');
@@ -34,37 +31,6 @@ export class AppCustom extends React.Component {
         }
     };
 
-    componentWillUnmount() {
-        this._unsub();
-    }
-
-    _toggle = () => {
-        (this._subscription) ? this._unsub() : this._sub();
-    };
-
-    _sub = () => {
-        DangerZone.DeviceMotion.setUpdateInterval(1000);
-        this._subscription = DangerZone.DeviceMotion.addListener(async (listener) => {
-            await this.setState({rotation: listener.rotation});
-            await this._rotate90andFlip(listener.rotation.alpha);
-        });
-    };
-
-    _unsub = () => {
-        this._subscription && this._subscription.remove();
-        this._subscription = null;
-    };
-
-    _rotate90andFlip = async (rotation) => {
-        const manipResult = await ImageManipulator.manipulateAsync(
-            this.state.image.uri,
-            [{ rotate: rotation*100}, { flip: { vertical: false }}],
-            { format: 'png' }
-        );
-        manipResult.src = await this.getBase64(manipResult.uri);
-        this.setState({ image: manipResult });
-    };
-
     getBase64 = async (uri) => {
         const data = await FileSystem.readAsStringAsync(uri, {encoding: FileSystem.EncodingTypes.Base64});
         return 'data:image/png;base64,' + data;
@@ -72,16 +38,11 @@ export class AppCustom extends React.Component {
 
     render() {
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent'}}>
                 {this.state.image && <Image
                     source={{uri: this.state.image.src}}
                     style={{width: 240, height: 320}}
                 />}
-
-                <TouchableOpacity
-                    onPress={() => {this._toggle()}} style={{marginTop: 20}}>
-                    <Text style={{fontSize: 45}}>⏯</Text>
-                </TouchableOpacity>
             </View>
         );
     }
