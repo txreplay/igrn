@@ -7,7 +7,7 @@ export class AppCustom extends React.Component {
     };
 
     state = {
-        motion: {},
+        rotation: {},
         image: null
     };
 
@@ -43,10 +43,9 @@ export class AppCustom extends React.Component {
     };
 
     _sub = () => {
-        DangerZone.DeviceMotion.setUpdateInterval(1000);
+        DangerZone.DeviceMotion.setUpdateInterval(100);
         this._subscription = DangerZone.DeviceMotion.addListener(async (listener) => {
             await this.setState({rotation: listener.rotation});
-            await this._rotate90andFlip(listener.rotation.alpha);
         });
     };
 
@@ -55,10 +54,10 @@ export class AppCustom extends React.Component {
         this._subscription = null;
     };
 
-    _rotate90andFlip = async (rotation) => {
+    _rotate90andFlip = async () => {
         const manipResult = await ImageManipulator.manipulateAsync(
             this.state.image.uri,
-            [{ rotate: rotation*100}, { flip: { vertical: false }}],
+            [{ rotate: this.rotation.alpha*100}, { flip: { vertical: false }}],
             { format: 'png' }
         );
         manipResult.src = await this.getBase64(manipResult.uri);
@@ -79,7 +78,7 @@ export class AppCustom extends React.Component {
                 />}
 
                 <TouchableOpacity
-                    onPress={() => {this._toggle()}} style={{marginTop: 20}}>
+                    onPress={async() => {await this._rotate90andFlip()}} style={{marginTop: 20}}>
                     <Text style={{fontSize: 45}}>⏯</Text>
                 </TouchableOpacity>
             </View>
